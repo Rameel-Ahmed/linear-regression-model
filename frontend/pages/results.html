@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results & Predictions - Linear Regression</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>🎯 Linear Regression</h2>
+        </div>
+        <div class="nav-item">
+            <span>📁</span> Data Upload
+        </div>
+        <div class="nav-item">
+            <span>📊</span> Training Setup
+        </div>
+        <div class="nav-item active">
+            <span>🎯</span> Results & Predict
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>📊 Model Results & Predictions</h1>
+                    <p>Analyze your trained model and make predictions on new data</p>
+                </div>
+                <button class="theme-toggle" id="themeBtn">🌙</button>
+            </div>
+        </div>
+
+        <!-- Training Success Banner -->
+        <div class="success-banner" id="successBanner">
+            <div class="banner-content">
+                <span class="banner-icon">✅</span>
+                <div class="banner-text">
+                    <h3>Training Completed Successfully!</h3>
+                    <p>Your linear regression model has been trained and is ready for predictions</p>
+                </div>
+                <span class="banner-close" onclick="closeBanner()">×</span>
+            </div>
+        </div>
+
+        <!-- Results Layout -->
+        <div class="results-layout">
+            <!-- Left Column -->
+            <div class="results-left">
+                <!-- Model Summary -->
+                <div class="card model-summary-card">
+                    <h3>📊 Model Summary</h3>
+                    
+                    <div class="equation-container">
+                        <div class="equation-display-large" id="finalEquation">
+                            y = 2.5000x + 1.2000
+                        </div>
+                    </div>
+
+                    <div class="summary-metrics">
+                        <div class="metric-item">
+                            <div class="metric-value" id="rSquared">0.8945</div>
+                            <div class="metric-label">R² Score</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="finalCost">0.000234</div>
+                            <div class="metric-label">Final Cost</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="totalEpochs">1,847</div>
+                            <div class="metric-label">Total Epochs</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="trainingTime">45s</div>
+                            <div class="metric-label">Training Time</div>
+                        </div>
+                    </div>
+
+                    <div class="training-params">
+                        <h4>Training Parameters</h4>
+                        <div class="params-grid">
+                            <div class="param-row">
+                                <span class="param-name">Learning Rate:</span>
+                                <span class="param-value" id="learningRateValue">0.01</span>
+                            </div>
+                            <div class="param-row">
+                                <span class="param-name">Tolerance:</span>
+                                <span class="param-value" id="toleranceValue">0.0001</span>
+                            </div>
+                            <div class="param-row">
+                                <span class="param-name">Dataset Size:</span>
+                                <span class="param-value" id="datasetSize">5 rows</span>
+                            </div>
+                            <div class="param-row">
+                                <span class="param-name">Train Split:</span>
+                                <span class="param-value" id="trainSplit">80%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Make Predictions -->
+                <div class="card predictions-card">
+                    <h3>🔮 Make Predictions</h3>
+                    
+                    <div class="prediction-section">
+                        <h4>Single Prediction</h4>
+                        <div class="single-prediction">
+                            <div class="prediction-input">
+                                <label for="xValue">Enter X Value</label>
+                                <input type="number" id="xValue" placeholder="Enter X value" step="any">
+                            </div>
+                            <div class="prediction-buttons">
+                                <button class="predict-btn" id="predictSingle">Predict</button>
+                                <button class="clear-btn" id="clearSingle">Clear</button>
+                            </div>
+                        </div>
+                        
+                        <div class="prediction-result" id="predictionResult" style="display: none;">
+                            <div class="result-display">
+                                <span class="result-label">Predicted Y:</span>
+                                <span class="result-value" id="predictedValue">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="batch-section">
+                        <h4>Batch Predictions</h4>
+                        <p class="batch-description">Upload a CSV file with X values to get predictions for multiple data points</p>
+                        
+                        <div class="batch-upload" id="batchUploadZone">
+                            <div class="upload-content">
+                                <span class="upload-icon">📁</span>
+                                <p>Drop CSV file here or click to browse</p>
+                                <span class="upload-hint">File should have X values in first column</span>
+                            </div>
+                            <input type="file" id="batchFileInput" accept=".csv" hidden>
+                        </div>
+                        
+                        <div class="batch-results" id="batchResults" style="display: none;">
+                            <div class="batch-summary">
+                                <span id="batchCount">0 predictions made</span>
+                                <button class="download-batch-btn" id="downloadBatchResults">Download Results</button>
+                            </div>
+                            <div class="batch-preview">
+                                <table id="batchTable">
+                                    <thead>
+                                        <tr>
+                                            <th>X Value</th>
+                                            <th>Predicted Y</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="batchTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="results-right">
+                <!-- Model Comparison -->
+                <div class="card comparison-card">
+                    <h3>⚖️ Model Comparison</h3>
+                    
+                    <div class="comparison-grid">
+                        <div class="model-card our-model">
+                            <h4>Our Model</h4>
+                            <div class="r-score" id="ourModelR2">R² = 0.8945</div>
+                            <div class="model-label">Custom Implementation</div>
+                        </div>
+                        
+                        <div class="model-card sklearn-model">
+                            <h4>Sklearn Model</h4>
+                            <div class="r-score" id="sklearnR2">R² = 0.9002</div>
+                            <div class="model-label">Industry Standard</div>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-note" id="comparisonNote">
+                        📊 Sklearn model performed slightly better by 0.0057 R² points
+                    </div>
+                    
+                    <div class="residual-analysis">
+                        <h4>Residual Analysis</h4>
+                        <div class="residual-placeholder">
+                            <div class="placeholder-icon">📈</div>
+                            <p>Residual plot will be generated</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Reports -->
+                <div class="card downloads-card">
+                    <h3>📥 Download Reports & Export Model</h3>
+                    
+                    <div class="download-grid">
+                        <div class="download-item">
+                            <div class="download-icon">📄</div>
+                            <div class="download-info">
+                                <h4>PDF Report</h4>
+                                <p>Comprehensive training report with charts and analysis</p>
+                            </div>
+                            <button class="download-btn" id="downloadPDF">Download PDF</button>
+                        </div>
+                        
+                        <div class="download-item">
+                            <div class="download-icon">📊</div>
+                            <div class="download-info">
+                                <h4>CSV Results</h4>
+                                <p>Training data, predictions, and residuals</p>
+                            </div>
+                            <button class="download-btn" id="downloadCSV">Download CSV</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/results.js"></script>
+    
+    <style>
+    /* Results Page Specific Styles */
+    .success-banner {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 1rem 2rem;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .banner-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .banner-icon {
+        font-size: 1.5rem;
+    }
+
+    .banner-text h3 {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.125rem;
+    }
+
+    .banner-text p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 0.875rem;
+    }
+
+    .banner-close {
+        margin-left: auto;
+        cursor: pointer;
+        font-size: 1.5rem;
+        opacity: 0.8;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .banner-close:hover {
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Results Layout */
+    .results-layout {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .results-left {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .results-right {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    /* Model Summary Card */
+    .model-summary-card {
+        background: linear-gradient(135deg, var(--card-bg) 0%, var(--stats-bg) 100%);
+        border: 2px solid var(--accent-color);
+    }
+
+    .equation-container {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .equation-display-large {
+        font-family: 'Courier New', monospace;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--accent-color);
+        background: var(--stats-bg);
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        border: 2px solid var(--accent-color);
+        display: inline-block;
+    }
+
+    .summary-metrics {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .metric-item {
+        text-align: center;
+        background: var(--stats-bg);
+        padding: 1.5rem 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--stats-border);
+    }
+
+    .metric-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--accent-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .metric-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .training-params {
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 1.5rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .training-params h4 {
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+        font-size: 1rem;
+    }
+
+    .params-grid {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .param-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .param-row:last-child {
+        border-bottom: none;
+    }
+
+    .param-name {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .param-value {
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* Downloads Card */
+    .downloads-card {
+        background: linear-gradient(135deg, var(--stats-bg) 0%, var(--card-bg) 100%);
+        border: 2px solid var(--stats-border);
+    }
+
+    .download-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .download-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: var(--card-bg);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .download-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .download-icon {
+        font-size: 2rem;
+        min-width: 50px;
+        text-align: center;
+    }
+
+    .download-info {
+        flex: 1;
+    }
+
+    .download-info h4 {
+        margin: 0 0 0.25rem 0;
+        color: var(--text-primary);
+        font-size: 1rem;
+    }
+
+    .download-info p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .download-btn {
+        background: linear-gradient(135deg, var(--accent-color) 0%, #2563eb 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 120px;
+    }
+
+    .download-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Model Comparison Card */
+    .comparison-card {
+        background: linear-gradient(135deg, var(--card-bg) 0%, var(--stats-bg) 100%);
+        border: 2px solid var(--stats-border);
+    }
+
+    .comparison-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .model-card {
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        border: 2px solid;
+        transition: all 0.3s ease;
+    }
+
+    .our-model {
+        border-color: var(--accent-color);
+        background: var(--card-bg);
+    }
+
+    .sklearn-model {
+        border-color: #10b981;
+        background: var(--card-bg);
+    }
+
+    .model-card h4 {
+        margin: 0 0 1rem 0;
+        color: var(--text-primary);
+        font-size: 1rem;
+    }
+
+    .r-score {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .our-model .r-score {
+        color: var(--accent-color);
+    }
+
+    .sklearn-model .r-score {
+        color: #10b981;
+    }
+
+    .model-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .comparison-note {
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: var(--stats-bg);
+        border-radius: 6px;
+        border: 1px solid var(--stats-border);
+    }
+
+    .residual-analysis h4 {
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+        font-size: 1rem;
+    }
+
+    .residual-placeholder {
+        background: var(--stats-bg);
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        padding: 3rem;
+        text-align: center;
+        color: var(--text-secondary);
+    }
+
+    .placeholder-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.6;
+    }
+
+    /* Predictions Card */
+    .predictions-card {
+        background: var(--card-bg);
+        border: 2px solid var(--accent-color);
+    }
+
+    .prediction-section {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .prediction-section h4 {
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+        font-size: 1rem;
+    }
+
+    .single-prediction {
+        display: flex;
+        gap: 1rem;
+        align-items: end;
+        margin-bottom: 1rem;
+    }
+
+    .prediction-input {
+        flex: 1;
+    }
+
+    .prediction-input label {
+        display: block;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .prediction-input input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: var(--card-bg);
+        color: var(--text-primary);
+        font-size: 0.9rem;
+    }
+
+    .prediction-buttons {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .predict-btn {
+        background: linear-gradient(135deg, var(--accent-color) 0%, #2563eb 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .predict-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .clear-btn {
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid var(--border-color);
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .clear-btn:hover {
+        background: var(--stats-bg);
+        color: var(--text-primary);
+    }
+
+    .prediction-result {
+        background: var(--stats-bg);
+        border: 1px solid var(--accent-color);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .result-display {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .result-label {
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .result-value {
+        color: var(--accent-color);
+        font-size: 1.25rem;
+        font-weight: 700;
+        font-family: 'Courier New', monospace;
+    }
+
+    .batch-section h4 {
+        color: var(--text-primary);
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+    }
+
+    .batch-description {
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .batch-upload {
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: var(--stats-bg);
+        margin-bottom: 1rem;
+    }
+
+    .batch-upload:hover,
+    .batch-upload.dragover {
+        border-color: var(--accent-color);
+        background: rgba(59, 130, 246, 0.05);
+        transform: scale(1.02);
+    }
+
+    .batch-upload .upload-icon {
+        font-size: 2rem;
+        opacity: 0.6;
+        margin-bottom: 0.5rem;
+    }
+
+    .batch-upload p {
+        color: var(--text-secondary);
+        margin: 0.5rem 0;
+        font-weight: 500;
+    }
+
+    .batch-upload .upload-hint {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+
+    .batch-results {
+        background: var(--stats-bg);
+        border-radius: 8px;
+        padding: 1.5rem;
+        border: 1px solid var(--stats-border);
+    }
+
+    .batch-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .download-batch-btn {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+    }
+
+    .download-batch-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .batch-preview {
+        overflow-x: auto;
+    }
+
+    .batch-preview table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--card-bg);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .batch-preview th,
+    .batch-preview td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 0.875rem;
+    }
+
+    .batch-preview th {
+        background: var(--stats-bg);
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .batch-preview td {
+        color: var(--text-secondary);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .results-layout {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .results-right {
+            order: -1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .summary-metrics {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .comparison-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .single-prediction {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .prediction-buttons {
+            justify-content: stretch;
+        }
+
+        .predict-btn,
+        .clear-btn {
+            flex: 1;
+        }
+
+        .download-item {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .batch-summary {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .summary-metrics {
+            grid-template-columns: 1fr;
+        }
+
+        .equation-display-large {
+            font-size: 1.25rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+        }
+    }
+    </style>
+</body>
+</html>

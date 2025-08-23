@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression - Data Upload</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>🎯 Linear Regression</h2>
+        </div>
+        <div class="nav-item">
+            <span>📁</span> Data Upload
+        </div>
+        <div class="nav-item">
+            <span>📊</span> Training Setup
+        </div>
+        <div class="nav-item active">
+            <span>🎯</span> Results & Predict
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Toggle -->
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="header-content">
+                    <div class="header-text">
+                        <h1>🎯 Linear Regression Model Training</h1>
+                        <p>Upload your dataset and configure your regression model</p>
+                    </div>
+                    <button class="theme-toggle" id="themeBtn">🌙</button>
+                </div>
+            </div>
+            <!-- Upload Section -->
+            <div class="card">
+                <h3>📤 Upload Your CSV Dataset</h3>
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-content">
+                        <span class="upload-icon">📁</span>
+                        <p>Click to upload or drag and drop your CSV file</p>
+                        <span class="upload-hint">Maximum file size: 10MB</span>
+                    </div>
+                    <input type="file" id="fileInput" accept=".csv" hidden>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="card" id="previewSection" style="display: none;">
+                <h3>👁️ Data Preview</h3>
+                <div class="table-container">
+                    <table id="dataTable">
+                        <thead id="tableHead"></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+                <div class="data-info">
+                    <span id="rowCount">Rows: 0</span>
+                    <span id="colCount">Columns: 0</span>
+                </div>
+            </div>
+
+            <!-- Column Selection -->
+            <div class="card" id="columnSection" style="display: none;">
+                <h3>🎯 Select X and Y Columns</h3>
+                <div class="column-selectors">
+                    <div class="selector-group">
+                        <label for="xColumn">X Column (Independent Variable):</label>
+                        <select id="xColumn">
+                            <option value="">Select X column...</option>
+                        </select>
+                    </div>
+                    <div class="selector-group">
+                        <label for="yColumn">Y Column (Dependent Variable):</label>
+                        <select id="yColumn">
+                            <option value="">Select Y column...</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="generatePlot" disabled>Generate Preview Plot</button>
+            </div>
+
+            <!-- Visualization Section -->
+            <div class="card" id="vizSection" style="display: none;">
+                <h3>📊 Data Visualization</h3>
+                <div class="viz-tabs">
+                    <button class="tab-btn active" onclick="showChart('scatter')">Scatter Plot</button>
+                    <button class="tab-btn" onclick="showChart('histogram')">Distribution</button>
+                    <button class="tab-btn" onclick="showChart('box')">Box Plot</button>
+<button class="tab-btn" onclick="showChart('density')">Density Plot</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="scatterChart"></canvas>
+                    <canvas id="histogramChart" style="display: none;"></canvas>
+                    <canvas id="boxChart" style="display: none;"></canvas>
+<canvas id="densityChart" style="display: none;"></canvas>                </div>
+                <div class="chart-stats" id="chartStats"></div>
+            </div>
+
+            <!-- Data Cleaning Section -->
+            <div class="card" id="cleaningSection" style="display: none;">
+                <h3>✅ Data Cleaning Options</h3>
+                <p class="section-subtitle">Select cleaning operations:</p>
+                
+                <div class="cleaning-options-horizontal">
+                    <div class="cleaning-checkbox">
+                        <input type="checkbox" id="removeDuplicates" checked>
+                        <label for="removeDuplicates">Remove duplicates</label>
+                    </div>
+                    
+                    <div class="cleaning-checkbox">
+                        <input type="checkbox" id="removeOutliers">
+                        <label for="removeOutliers">Remove outliers (IQR method)</label>
+                    </div>
+                </div>
+                
+                <div class="missing-values-section">
+                    <h4>Handle missing Y values:</h4>
+                    <div class="radio-options">
+                        <div class="radio-item">
+                            <input type="radio" id="fillMean" name="missingY" value="mean">
+                            <label for="fillMean">Fill with mean</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="removeRows" name="missingY" value="remove" checked>
+                            <label for="removeRows">Remove rows</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cleaning-info" id="missingInfo">
+                    0 rows have missing/invalid values
+                </div>
+                
+                <div class="final-actions">
+                    <button class="btn btn-success btn-large" id="proceedTraining">
+                        🚀 Proceed to Training Setup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>

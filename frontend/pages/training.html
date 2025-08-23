@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Training - Linear Regression</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>🎯 Linear Regression</h2>
+        </div>
+        <div class="nav-item">
+            <span>📁</span> Data Upload
+        </div>
+        <div class="nav-item disabled">
+            <span>📊</span> Training Setup
+        </div>
+        <div class="nav-item disabled">
+            <span>🎯</span> Results & Predict
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>⚙️ Model Training Configuration</h1>
+                    <p>Configure parameters and watch your model train in real-time</p>
+                </div>
+                <button class="theme-toggle" id="themeBtn">🌙</button>
+            </div>
+        </div>
+
+        <!-- Training Layout -->
+        <div class="training-layout">
+            <!-- Left: Visualization -->
+            <div class="training-left">
+                <div class="card viz-card">
+                    <div class="viz-header">
+                        <h3>📊 Live Training Visualization</h3>
+                        <div  class="equation-display" id="equationDisplay">y = NaN + NaN·x</div>
+                    </div>
+
+                    <div class="viz-tabs">
+                        <button class="tab-btn active" onclick="showChart('both')">📊 Both Charts</button>
+                        <button class="tab-btn" onclick="showChart('scatter')">📈 Scatter Only</button>
+                        <button class="tab-btn" onclick="showChart('cost')">📉 Cost Only</button>
+                    </div>
+
+                    <div class="chart-grid" id="chartGrid">
+                        <div class="chart-container" id="scatterContainer">
+                            <canvas id="scatterChart"></canvas>
+                        </div>
+                        <div class="chart-container" id="costContainer">
+                            <canvas id="costChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="training-status">
+                        <span class="status-indicator" id="statusIndicator">⚪</span>
+                        <span class="status-text" id="statusText">Ready to train</span>
+                    </div>
+                </div>
+
+                <!-- Training Controls -->
+                <div class="card controls-card">
+                    <h3>🎮 Training Controls</h3>
+                    
+                    <div class="progress-container">
+                        <div class="progress-info">
+                            <span id="progressText">Ready to start</span>
+                            <span id="costValue">Cost: -</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+
+                    <div class="control-buttons">
+                        <button class="control-btn start-btn" id="startBtn">
+                            <span class="btn-icon">▶</span>
+                            Start Training
+                        </button>
+                        <button class="control-btn pause-btn" id="pauseBtn" disabled>
+                            <span class="btn-icon">⏸</span>
+                            Pause
+                        </button>
+                        <button class="control-btn stop-btn" id="stopBtn" disabled>
+                            <span class="btn-icon">⏹</span>
+                            Stop
+                        </button>
+                        <button class="control-btn restart-btn" id="restartBtn">
+                            <span class="btn-icon">🔄</span>
+                            Restart
+                        </button>
+                    </div>
+
+                    <div class="export-buttons">
+                        <button class="export-btn" id="saveModel" disabled>
+                            <span class="btn-icon">💾</span>
+                            Save Model
+                        </button>
+                        <button class="export-btn" id="viewResults" disabled>
+                            <span class="btn-icon">📊</span>
+                            View Results
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Controls -->
+            <div class="training-right">
+                <!-- Data Summary -->
+                <div class="card summary-card">
+                    <h3>📋 Data Summary</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-label">X Variable</span>
+                            <span class="summary-value" id="xVariable">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Y Variable</span>
+                            <span class="summary-value" id="yVariable">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Data Points</span>
+                            <span class="summary-value" id="dataPoints">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Correlation</span>
+                            <span class="summary-value" id="correlation">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Training Parameters -->
+                <div class="card params-card">
+                    <h3>⚙️ Training Parameters</h3>
+                    
+                    <div class="param-group">
+                        <label>Learning Rate</label>
+                        <div class="slider-container">
+                            <input type="range" id="learningRate" min="0.001" max="0.1" step="0.001" value="0.01">
+                            <input type="number" class="param-input" id="learningRateInput" value="0.01" step="0.001">
+                        </div>
+                        <span class="param-help">How fast the model learns</span>
+                    </div>
+
+                    <div class="param-group">
+                        <label>Max Epochs</label>
+                        <div class="slider-container">
+                            <input type="range" id="epochs" min="100" max="2000" step="50" value="500">
+                            <input type="number" class="param-input" id="epochsInput" value="500">
+                        </div>
+                        <span class="param-help">Maximum training iterations</span>
+                    </div>
+
+                    <div class="param-group">
+                        <label>Convergence Tolerance</label>
+                        <div class="slider-container">
+                            <input type="range" id="tolerance" min="0.0001" max="0.01" step="0.0001" value="0.001">
+                            <input type="number" class="param-input" id="toleranceInput" value="0.001" step="0.0001">
+                        </div>
+                        <span class="param-help">Stop when improvement is small</span>
+                    </div>
+
+                    <div class="param-group">
+                        <label>Training Mode</label>
+                        <div class="mode-buttons">
+                            <button class="mode-btn active" data-mode="fast">⚡ Fast</button>
+                            <button class="mode-btn" data-mode="balanced">⚖️ Balanced</button>
+                            <button class="mode-btn" data-mode="accurate">🎯 Accurate</button>
+                            <button class="mode-btn" data-mode="custom">🔧 Custom</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Features -->
+                <div class="card advanced-card">
+                    <h3>🚀 Advanced Features</h3>
+                    <div class="feature-toggle">
+                        <div class="toggle-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="earlyStop" checked>
+                                <span class="toggle-slider"></span>
+                                Early Stopping
+                            </label>
+                            <span class="feature-help">Stop if no improvement</span>
+                        </div>
+                        <div class="toggle-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="liveUpdate" checked>
+                                <span class="toggle-slider"></span>
+                                Real-time Visualization
+                            </label>
+                            <span class="feature-help">Show live training progress</span>
+                        </div>
+                        <div class="toggle-item">
+                            <span class="feature-help">Save model every 100 epochs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/training.js"></script>
+</body>
+</html>
