@@ -4,23 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Linear Regression - Data Upload</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
 <body>
     <!-- Sidebar -->
     <nav class="sidebar">
         <div class="sidebar-header">
-            <h2>🎯 Linear Regression</h2>
+            <h2>Univariate Regression</h2>
+            <button class="sidebar-toggle" id="sidebarToggle">Menu</button>
         </div>
         <div class="nav-item active">
-            <span>📁</span> Data Upload
+            <span></span> Data Upload
         </div>
         <div class="nav-item">
-            <span>📊</span> Training Setup
+            <span></span> Training Setup
         </div>
         <div class="nav-item">
-            <span>🎯</span> Results & Predict
+            <span></span> Results & Predict
         </div>
     </nav>
 
@@ -33,18 +34,18 @@
             <div class="page-header">
                 <div class="header-content">
                     <div class="header-text">
-                        <h1>🎯 Linear Regression Model Training</h1>
+                        <h1>Linear Regression Model Training</h1>
                         <p>Upload your dataset and configure your regression model</p>
                     </div>
-                    <button class="theme-toggle" id="themeBtn">🌙</button>
+                    <button class="theme-toggle" id="themeBtn">Theme</button>
                 </div>
             </div>
             <!-- Upload Section -->
             <div class="card">
-                <h3>📤 Upload Your CSV Dataset</h3>
+                <h3>Upload Your CSV Dataset</h3>
                 <div class="upload-zone" id="uploadZone">
                     <div class="upload-content">
-                        <span class="upload-icon">📁</span>
+                        <span class="upload-icon"></span>
                         <p>Click to upload or drag and drop your CSV file</p>
                         <span class="upload-hint">Maximum file size: 10MB</span>
                     </div>
@@ -54,7 +55,7 @@
 
             <!-- Preview Section -->
             <div class="card" id="previewSection" style="display: none;">
-                <h3>👁️ Data Preview</h3>
+                <h3>Data Preview</h3>
                 <div class="table-container">
                     <table id="dataTable">
                         <thead id="tableHead"></thead>
@@ -69,7 +70,7 @@
 
             <!-- Column Selection -->
             <div class="card" id="columnSection" style="display: none;">
-                <h3>🎯 Select X and Y Columns</h3>
+                <h3>Select X and Y Columns</h3>
                 <div class="column-selectors">
                     <div class="selector-group">
                         <label for="xColumn">X Column (Independent Variable):</label>
@@ -89,24 +90,25 @@
 
             <!-- Visualization Section -->
             <div class="card" id="vizSection" style="display: none;">
-                <h3>📊 Data Visualization</h3>
+                <h3>Data Visualization</h3>
                 <div class="viz-tabs">
                     <button class="tab-btn active" onclick="showChart('scatter')">Scatter Plot</button>
                     <button class="tab-btn" onclick="showChart('histogram')">Distribution</button>
                     <button class="tab-btn" onclick="showChart('box')">Box Plot</button>
-<button class="tab-btn" onclick="showChart('density')">Density Plot</button>
+                    <button class="tab-btn" onclick="showChart('density')">Density Plot</button>
                 </div>
                 <div class="chart-container">
                     <canvas id="scatterChart"></canvas>
                     <canvas id="histogramChart" style="display: none;"></canvas>
                     <canvas id="boxChart" style="display: none;"></canvas>
-<canvas id="densityChart" style="display: none;"></canvas>                </div>
+   
+                    <canvas id="densityChart" style="display: none;"></canvas>                </div>
                 <div class="chart-stats" id="chartStats"></div>
             </div>
 
             <!-- Data Cleaning Section -->
             <div class="card" id="cleaningSection" style="display: none;">
-                <h3>✅ Data Cleaning Options</h3>
+                <h3>Data Cleaning Options</h3>
                 <p class="section-subtitle">Select cleaning operations:</p>
                 
                 <div class="cleaning-options-horizontal">
@@ -141,13 +143,13 @@
                 
                 <div class="final-actions">
                     <button class="btn btn-success btn-large" id="proceedTraining">
-                        🚀 Proceed to Training Setup
+                        Proceed to Training Setup
                     </button>
                 </div>
             </div>
         </div>
     </main>
 
-    <script src="../js/script.js"></script>
+    <script src="/static/js/script.js"></script>
 </body>
 </html>

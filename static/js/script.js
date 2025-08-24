@@ -4,8 +4,42 @@ let headers = [];
 let chart = null;
 let currentChart = 'scatter';
 
-// Initialize app - FINAL VERSION
+// API configuration
+const API_BASE_URL = 'http://localhost:8000/api';
+
+// Sidebar toggle functionality
+function setupSidebarToggle() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    
+    console.log('🔍 Sidebar toggle setup:', { sidebarToggle, sidebar, mainContent });
+    
+    if (sidebarToggle && sidebar && mainContent) {
+        console.log('✅ Sidebar toggle elements found, adding event listeners');
+        
+        sidebarToggle.addEventListener('click', () => {
+            console.log('🔄 Sidebar toggle clicked');
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('sidebar-collapsed');
+            
+            // Update button text based on state
+            if (sidebar.classList.contains('collapsed')) {
+                sidebarToggle.textContent = '→'; // Arrow right when collapsed
+            } else {
+                sidebarToggle.textContent = '☰'; // Hamburger when expanded
+            }
+            
+            console.log('📱 Sidebar collapsed:', sidebar.classList.contains('collapsed'));
+        });
+    } else {
+        console.error('❌ Sidebar toggle elements not found:', { sidebarToggle, sidebar, mainContent });
+    }
+}
+
+// Initialize when DOM loads
 document.addEventListener('DOMContentLoaded', function() {
+    setupSidebarToggle();
     console.log('=== APP STARTING ===');
     
     // THEME TOGGLE - BULLETPROOF
@@ -95,7 +129,7 @@ function setupEventListeners() {
 
     // Training setup
     if (elements.proceedTraining) {
-        elements.proceedTraining.onclick = proceedToTraining;
+        elements.proceedTraining.onclick = processDataWithCleaning;
     }
 }
 
@@ -243,6 +277,13 @@ function checkColumnSelection() {
     
     if (hasSelection && !differentColumns) {
         alert('X and Y columns must be different');
+        return;
+    }
+    
+    // Show cleaning section when columns are selected
+    if (hasSelection && differentColumns) {
+        elements.cleaningSection.style.display = 'block';
+        console.log('✅ Columns selected, showing cleaning options');
     }
 }
 
@@ -558,20 +599,59 @@ function calculateCorrelation(xValues, yValues) {
     
     return numerator / Math.sqrt(xSumSq * ySumSq);
 }
-function proceedToTraining() {
-    const trainingData = {
-        fileName: window.csvFileName || 'unknown.csv',  // ADD THIS LINE
-        csvData: csvData,
-        headers: headers,
-        xColumn: elements.xColumn.value,
-        yColumn: elements.yColumn.value,
-        cleaning: {
-            removeDuplicates: document.getElementById('removeDuplicates').checked,
-            removeOutliers: document.getElementById('removeOutliers').checked,
-            missingHandling: document.querySelector('input[name="missingY"]:checked').value
+async function processDataWithCleaning() {
+    try {
+        // Get the selected file
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            alert('Please select a CSV file first');
+            return;
         }
-    };
-    
-    localStorage.setItem('regressionData', JSON.stringify(trainingData));
-    window.location.href = 'training.html';
+        
+        // Get selected columns
+        const xColumn = document.getElementById('xColumn').value;
+        const yColumn = document.getElementById('yColumn').value;
+        
+        if (!xColumn || !yColumn) {
+            alert('Please select both X and Y columns first');
+            return;
+        }
+        
+        // Get cleaning options
+        const removeDuplicates = document.getElementById('removeDuplicates').checked;
+        const removeOutliers = document.getElementById('removeOutliers').checked;
+        const handleMissing = document.querySelector('input[name="missingY"]:checked').value;
+        
+        // Create FormData and send
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('x_column', xColumn);
+        formData.append('y_column', yColumn);
+        formData.append('remove_duplicates', removeDuplicates);
+        formData.append('remove_outliers', removeOutliers);
+        formData.append('handle_missing', handleMissing);
+        
+        // Send to backend
+        const response = await fetch(`${API_BASE_URL}/process-data`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            
+            // Store the complete response for training page
+            localStorage.setItem('trainingData', JSON.stringify(result));
+            
+            // Navigate to training page
+            window.location.href = '/static/training.html';
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.detail);
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results & Predictions - Linear Regression</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
 <body>
@@ -12,6 +12,7 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <h2>🎯 Linear Regression</h2>
+            <button class="sidebar-toggle" id="sidebarToggle">☰</button>
         </div>
         <div class="nav-item active">
             <span>📁</span> Data Upload
@@ -53,61 +54,15 @@
         <div class="results-layout">
             <!-- Left Column -->
             <div class="results-left">
-                <!-- Model Summary -->
-                <div class="card model-summary-card">
-                    <h3>📊 Model Summary</h3>
-                    
-                    <div class="equation-container">
-                        <div class="equation-display-large" id="finalEquation">
-                            y = 2.5000x + 1.2000
-                        </div>
-                    </div>
-
-                    <div class="summary-metrics">
-                        <div class="metric-item">
-                            <div class="metric-value" id="rSquared">0.8945</div>
-                            <div class="metric-label">R² Score</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value" id="finalCost">0.000234</div>
-                            <div class="metric-label">Final Cost</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value" id="totalEpochs">1,847</div>
-                            <div class="metric-label">Total Epochs</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value" id="trainingTime">45s</div>
-                            <div class="metric-label">Training Time</div>
-                        </div>
-                    </div>
-
-                    <div class="training-params">
-                        <h4>Training Parameters</h4>
-                        <div class="params-grid">
-                            <div class="param-row">
-                                <span class="param-name">Learning Rate:</span>
-                                <span class="param-value" id="learningRateValue">0.01</span>
-                            </div>
-                            <div class="param-row">
-                                <span class="param-name">Tolerance:</span>
-                                <span class="param-value" id="toleranceValue">0.0001</span>
-                            </div>
-                            <div class="param-row">
-                                <span class="param-name">Dataset Size:</span>
-                                <span class="param-value" id="datasetSize">5 rows</span>
-                            </div>
-                            <div class="param-row">
-                                <span class="param-name">Train Split:</span>
-                                <span class="param-value" id="trainSplit">80%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Make Predictions -->
                 <div class="card predictions-card">
                     <h3>🔮 Make Predictions</h3>
+                    
+                    <div class="equation-container">
+                        <div class="equation-display-large" id="predictionEquation">
+                            y = 2.5000x + 1.2000
+                        </div>
+                    </div>
                     
                     <div class="prediction-section">
                         <h4>Single Prediction</h4>
@@ -162,37 +117,91 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right Column -->
-            <div class="results-right">
+
+
                 <!-- Model Comparison -->
                 <div class="card comparison-card">
                     <h3>⚖️ Model Comparison</h3>
                     
-                    <div class="comparison-grid">
-                        <div class="model-card our-model">
-                            <h4>Our Model</h4>
-                            <div class="r-score" id="ourModelR2">R² = 0.8945</div>
-                            <div class="model-label">Custom Implementation</div>
-                        </div>
-                        
-                        <div class="model-card sklearn-model">
-                            <h4>Sklearn Model</h4>
-                            <div class="r-score" id="sklearnR2">R² = 0.9002</div>
-                            <div class="model-label">Industry Standard</div>
-                        </div>
+                    <div class="comparison-table">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Our Model</th>
+                                    <th>Sklearn Model</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>R² Score</td>
+                                    <td id="ourModelR2">0.8945</td>
+                                    <td id="sklearnR2">0.9002</td>
+                                </tr>
+                                <tr>
+                                    <td>RMSE</td>
+                                    <td id="ourModelRmse">0.000234</td>
+                                    <td id="sklearnRmse">0.000198</td>
+                                </tr>
+                                <tr>
+                                    <td>MAE</td>
+                                    <td id="ourModelMae">0.000123</td>
+                                    <td id="sklearnMae">0.000098</td>
+                                </tr>
+                                <tr>
+                                    <td>Equation</td>
+                                    <td id="ourModelEquation">y = 2.5000x + 1.2000</td>
+                                    <td id="sklearnEquation">y = 2.4987x + 1.1989</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     
                     <div class="comparison-note" id="comparisonNote">
-                        📊 Sklearn model performed slightly better by 0.0057 R² points
+                        📊 Performance comparison between custom implementation and industry standard
                     </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="results-right">
+                <!-- Training Parameters -->
+                <div class="card training-params-card">
+                    <h3>⚙️ Training Parameters</h3>
                     
-                    <div class="residual-analysis">
-                        <h4>Residual Analysis</h4>
-                        <div class="residual-placeholder">
-                            <div class="placeholder-icon">📈</div>
-                            <p>Residual plot will be generated</p>
+                    <div class="params-grid">
+                        <div class="param-row">
+                            <span class="param-name">Learning Rate:</span>
+                            <span class="param-value" id="learningRateValue">0.01</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">Epochs:</span>
+                            <span class="param-value" id="epochsValue">100</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">Tolerance:</span>
+                            <span class="param-value" id="toleranceValue">0.0001</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">Early Stopping:</span>
+                            <span class="param-value" id="earlyStoppingValue">Yes</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">Training Speed:</span>
+                            <span class="param-value" id="trainingSpeedValue">1.0</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">Train Split:</span>
+                            <span class="param-value" id="trainSplit">80%</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">X Column:</span>
+                            <span class="param-value" id="xColumnValue">X</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">Y Column:</span>
+                            <span class="param-value" id="yColumnValue">Y</span>
                         </div>
                     </div>
                 </div>
@@ -225,7 +234,7 @@
         </div>
     </main>
 
-    <script src="../js/results.js"></script>
+    <script src="/static/js/results.js"></script>
     
     <style>
     /* Results Page Specific Styles */
@@ -388,6 +397,55 @@
         font-size: 0.9rem;
     }
 
+    /* Training Parameters Card */
+    .training-params-card {
+        background: linear-gradient(135deg, var(--card-bg) 0%, var(--stats-bg) 100%);
+        border: 2px solid var(--accent-color);
+    }
+
+    .training-params-card h3 {
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .params-grid {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .param-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        background: var(--card-bg);
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .param-row:hover {
+        background: var(--stats-bg);
+        transform: translateX(4px);
+    }
+
+    .param-name {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .param-value {
+        color: var(--accent-color);
+        font-weight: 600;
+        font-size: 0.9rem;
+        font-family: 'Courier New', monospace;
+    }
+
     /* Downloads Card */
     .downloads-card {
         background: linear-gradient(135deg, var(--stats-bg) 0%, var(--card-bg) 100%);
@@ -461,54 +519,50 @@
         border: 2px solid var(--stats-border);
     }
 
-    .comparison-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+    .comparison-table {
         margin-bottom: 1.5rem;
     }
 
-    .model-card {
-        padding: 1.5rem;
+    .comparison-table table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--card-bg);
         border-radius: 8px;
-        text-align: center;
-        border: 2px solid;
-        transition: all 0.3s ease;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
     }
 
-    .our-model {
-        border-color: var(--accent-color);
-        background: var(--card-bg);
+    .comparison-table th,
+    .comparison-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 0.9rem;
     }
 
-    .sklearn-model {
-        border-color: #10b981;
-        background: var(--card-bg);
-    }
-
-    .model-card h4 {
-        margin: 0 0 1rem 0;
+    .comparison-table th {
+        background: var(--stats-bg);
+        font-weight: 600;
         color: var(--text-primary);
-        font-size: 1rem;
+        text-align: center;
     }
 
-    .r-score {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
+    .comparison-table td:first-child {
+        font-weight: 600;
+        color: var(--text-primary);
+        background: var(--stats-bg);
     }
 
-    .our-model .r-score {
+    .comparison-table td:nth-child(2) {
         color: var(--accent-color);
+        font-weight: 600;
+        text-align: center;
     }
 
-    .sklearn-model .r-score {
+    .comparison-table td:nth-child(3) {
         color: #10b981;
-    }
-
-    .model-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-weight: 600;
+        text-align: center;
     }
 
     .comparison-note {
@@ -522,26 +576,7 @@
         border: 1px solid var(--stats-border);
     }
 
-    .residual-analysis h4 {
-        color: var(--text-primary);
-        margin: 0 0 1rem 0;
-        font-size: 1rem;
-    }
 
-    .residual-placeholder {
-        background: var(--stats-bg);
-        border: 2px dashed var(--border-color);
-        border-radius: 8px;
-        padding: 3rem;
-        text-align: center;
-        color: var(--text-secondary);
-    }
-
-    .placeholder-icon {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-        opacity: 0.6;
-    }
 
     /* Predictions Card */
     .predictions-card {
@@ -781,9 +816,7 @@
             grid-template-columns: repeat(2, 1fr);
         }
 
-        .comparison-grid {
-            grid-template-columns: 1fr;
-        }
+
 
         .single-prediction {
             flex-direction: column;
